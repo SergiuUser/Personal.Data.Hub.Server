@@ -23,4 +23,8 @@
     <ProjectReference Include="..\Personal.Dara.Hub.Server.Models\Personal.Dara.Hub.Server.Models.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Controllers\" />
+  </ItemGroup>
+
 </Project>
