@@ -68,8 +68,6 @@ namespace Personal.Dara.Hub.Server.Data.Context
             modelBuilder.Entity<Workspace>()
                 .Property(w => w.Id)
                 .ValueGeneratedOnAdd();
-
-
         }
 
 
