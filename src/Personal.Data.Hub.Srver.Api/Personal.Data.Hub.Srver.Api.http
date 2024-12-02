@@ -1,6 +1,5 @@
 @Personal.Data.Hub.Srver.Api_HostAddress = http://localhost:5129
 
-GET {{Personal.Data.Hub.Srver.Api_HostAddress}}/weatherforecast/
 Accept: application/json
 
 ###
