@@ -65,9 +65,11 @@ namespace Personal.Dara.Hub.Server.Data.Context
                 .IsRequired();
             #endregion
 
+            #region Id auto generation
             modelBuilder.Entity<Workspace>()
                 .Property(w => w.Id)
                 .ValueGeneratedOnAdd();
+            #endregion
         }
 
 
