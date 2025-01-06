@@ -1,6 +1,6 @@
 ﻿using Personal.Dara.Hub.Server.Models.Helpers;
 
-namespace Personal.Dara.Hub.Server.Models.Data_transfer_object
+namespace Personal.Dara.Hub.Server.Models
 {
     public class RegisterUserDto
     {
