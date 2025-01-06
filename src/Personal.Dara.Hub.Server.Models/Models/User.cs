@@ -7,12 +7,13 @@ namespace Personal.Dara.Hub.Server.Models.Models
     {
         public required int Id { get; set; }
         public required string? Username { get; set; }
-        public string? FirstName { get; set; } = "User";
-        public string? LastName { get; set; } = "User";
-        public int Age { get; set; } = 0;
+        public required string FirstName { get; set; } = "User";
+        public string? LastName { get; set; } = string.Empty;
+        public required int Age { get; set; }
+        public UserGenderHelper Gender { get; set; } = UserGenderHelper.NotSpecified;
         public required string Email { get; set; }
         public required string Password { get; set; }
-        public UserRoleHelper UserRole { get; set; } = UserRoleHelper.None;
+        public UserRoleHelper UserRole { get; set; } = UserRoleHelper.Default;
         public ICollection<UserWorkspace>? Workspaces { get; set; }
     }
 }

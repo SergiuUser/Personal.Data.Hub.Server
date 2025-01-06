@@ -43,12 +43,13 @@ namespace Personal.Dara.Hub.Server.Data.Repositories
         public async Task SaveAsync() => await _context.SaveChangesAsync();
 
         public void Update(T entity){
-            if (entity == null)
+            var entry = _context.Entry(entity);
+            if (entry.State == EntityState.Detached)
             {
-                throw new ArgumentNullException(nameof(entity));
+                _dbSet.Attach(entity);
             }
 
-            _dbSet.Update(entity);
+            entry.State = EntityState.Modified;
         }
 
         #endregion
