@@ -2,7 +2,7 @@
 
 namespace Personal.Dara.Hub.Server.Models.Data_transfer_object
 {
-    public class RegisterUserByAdminDTO
+    public class RegisterUserDto
     {
         public required string FirstName { get; set; }
         public string LastName { get; set; } = string.Empty;
@@ -12,7 +12,6 @@ namespace Personal.Dara.Hub.Server.Models.Data_transfer_object
         public required string Email { get; set; }
         public required string Password { get; set; }
         public required string ConfirmPassword { get; set; }
-        public required UserRoleHelper Role { get; set; } = UserRoleHelper.Default;
 
     }
 }
