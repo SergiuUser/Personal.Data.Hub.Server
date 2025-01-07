@@ -1,7 +1,9 @@
 ﻿using Personal.Dara.Hub.Server.BLL.Services.Interfaces;
 using Personal.Dara.Hub.Server.Data.Repositories;
+using Personal.Dara.Hub.Server.Models;
 using Personal.Dara.Hub.Server.Models.Data_transfer_object;
 using Personal.Dara.Hub.Server.Models.Models;
+using System.Numerics;
 
 namespace Personal.Dara.Hub.Server.BLL.Services
 {
@@ -66,5 +68,19 @@ namespace Personal.Dara.Hub.Server.BLL.Services
                 throw;
             }
         }
+
+        public async Task<bool> Register(RegisterUserDTO entity)
+        {
+            // Implement username and email duplicate verification
+            // Also username tag + 1 if one already exist -- tag format "A0b3n"
+
+            // It return true only if everything is completed
+            // Implement exceptions handling
+
+            // TODO: Implement email confirmation system
+
+            return false;
+        }
+
     }
 }

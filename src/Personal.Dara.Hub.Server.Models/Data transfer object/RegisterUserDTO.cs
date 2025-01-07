@@ -2,7 +2,7 @@
 
 namespace Personal.Dara.Hub.Server.Models
 {
-    public class RegisterUserByAdminDTO
+    public class RegisterUserDTO
     {
         public required string FirstName { get; set; }
         public string LastName { get; set; } = string.Empty;
