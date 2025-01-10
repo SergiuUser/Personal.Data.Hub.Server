@@ -40,7 +40,7 @@ namespace Personal.Dara.Hub.Server.Data.Repositories
 
         public async Task<T?> GetByExpression(Expression<Func<T, bool>> expression) => await _dbSet.FirstOrDefaultAsync(expression);
 
-        public async Task SaveAsync() => await _context.SaveChangesAsync();
+        public async Task<bool> SaveAsync() => await _context.SaveChangesAsync() > 0;
 
         public void Update(T entity){
             var entry = _context.Entry(entity);

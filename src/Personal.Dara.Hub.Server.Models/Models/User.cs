@@ -5,7 +5,7 @@ namespace Personal.Dara.Hub.Server.Models.Models
 {
     public class User
     {
-        public required int Id { get; set; }
+        public int Id { get; set; } // Auto generation
         public required string? Username { get; set; }
         public required string FirstName { get; set; } = "User";
         public string? LastName { get; set; } = string.Empty;
@@ -14,6 +14,7 @@ namespace Personal.Dara.Hub.Server.Models.Models
         public required string Email { get; set; }
         public required string Password { get; set; }
         public UserRoleHelper UserRole { get; set; } = UserRoleHelper.Default;
+        public bool IsActivated { get; set; } = false;
         public ICollection<UserWorkspace>? Workspaces { get; set; }
     }
 }

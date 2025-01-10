@@ -3,7 +3,6 @@ using Personal.Dara.Hub.Server.Data.Repositories;
 using Personal.Dara.Hub.Server.Models;
 using Personal.Dara.Hub.Server.Models.Data_transfer_object;
 using Personal.Dara.Hub.Server.Models.Models;
-using System.Numerics;
 
 namespace Personal.Dara.Hub.Server.BLL.Services
 {
@@ -22,14 +21,14 @@ namespace Personal.Dara.Hub.Server.BLL.Services
 
         #endregion
 
-        public async Task<(bool loginSucced, string token)> Login(LoginDTO entity)
+        public async Task<string> Login(LoginDTO entity)
         {
             if (entity == null)
                 throw new ArgumentNullException(nameof(entity), "The entity provided is Empty.");
 
             if (string.IsNullOrEmpty(entity.Username) && string.IsNullOrEmpty(entity.Email))
             {
-                throw new ArgumentException("Both Username or Email cannot be null or empty.");
+                throw new ArgumentNullException("Both Username or Email cannot be null or empty.");
             }
 
             User? entityDB = null;
@@ -56,11 +55,11 @@ namespace Personal.Dara.Hub.Server.BLL.Services
 
                 if (!_passwordService.VerifyPassword(entity.Password, entityDB.Password))
                 {
-                    return (false, string.Empty);
+                    throw new UnauthorizedAccessException("Password isn't corrent");
                 }
 
                 // TODO: Token creation and return it
-                return (false, string.Empty);
+                return string.Empty;
 
             }
             catch
@@ -71,15 +70,42 @@ namespace Personal.Dara.Hub.Server.BLL.Services
 
         public async Task<bool> Register(RegisterUserDTO entity)
         {
-            // Implement username and email duplicate verification
-            // Also username tag + 1 if one already exist -- tag format "A0b3n"
 
-            // It return true only if everything is completed
-            // Implement exceptions handling
+            if (entity == null) throw new ArgumentNullException(nameof(entity), "Entity cannot be null");
 
-            // TODO: Implement email confirmation system
+            if (await _userRepository.DoesEmailAndUsernameExists(entity.Email, entity.Username))
+                throw new InvalidOperationException("Email or Username already exists!");
 
-            return false;
+            if (!_passwordService.VerifyIdenticalForConfirm(entity.Password, entity.ConfirmPassword))
+                throw new InvalidOperationException("Password nad confirm password doesn't match");
+            try
+            {
+
+                var userToAdd = new User()
+                {
+                    FirstName = entity.FirstName,
+                    LastName = entity.LastName,
+                    Username = entity.Username,
+                    Email = entity.Email,
+                    Password = _passwordService.HashPassword(entity.Password),
+                    Age = entity.Age,
+                    Gender = entity.Gender,
+                    UserRole = entity.Role
+                };
+
+                // TODO: Implement email confirmation system
+
+                await _userRepository.Add(userToAdd);
+
+                if (await _userRepository.SaveAsync() == false)
+                    throw new InvalidOperationException("The server isnt working at the moment, try later!");
+
+                return true;
+            }
+            catch
+            {
+                throw;
+            }
         }
 
     }

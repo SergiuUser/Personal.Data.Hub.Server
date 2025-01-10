@@ -1,6 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Personal.Dara.Hub.Server.BLL.Services;
 using Personal.Dara.Hub.Server.Data.Context;
+using Personal.Dara.Hub.Server.Models;
+using Personal.Dara.Hub.Server.Models.Data_transfer_object;
 using Personal.Dara.Hub.Server.Models.Models;
 
 namespace Personal.Data.Hub.Srver.Api.Controllers
@@ -9,88 +12,70 @@ namespace Personal.Data.Hub.Srver.Api.Controllers
     [ApiController]
     public class Account : ControllerBase
     {
-        private readonly ServerDbContext _context;
+        private readonly AccountService _accountService;
+        private readonly EmailService _emailService;
 
-        public Account(ServerDbContext context)
+        public Account(AccountService accountService, EmailService emailService)
         {
-            _context = context;
-        }
-
-        // GET: api/Account/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<User>> GetUser(int id)
-        {
-            var user = await _context.Users.FindAsync(id);
-
-            if (user == null)
-            {
-                return NotFound();
-            }
-
-            return user;
-        }
-
-        // PUT: api/Account/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutUser(int id, User user)
-        {
-            if (id != user.Id)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(user).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!UserExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
+            _accountService = accountService;
+            _emailService = emailService;
         }
 
         // POST: api/Account
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<User>> PostUser(User user)
+        public async Task<ActionResult<User>> Register([FromBody] RegisterUserDTO entity)
         {
-            _context.Users.Add(user);
-            await _context.SaveChangesAsync();
+            try
+            {
+                bool succed = await _accountService.Register(entity);
 
-            return CreatedAtAction("GetUser", new { id = user.Id }, user);
+                // Send an email for confirmation
+
+                return Ok(new {Succed = succed});
+            }
+            catch (ArgumentNullException ex)
+            {
+                return BadRequest(new { Error = ex.Message });
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(new { Error = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { Error = "An unexpected error occurred.", Details = ex.Message });
+            }
         }
 
         // DELETE: api/Account/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteUser(int id)
+        [HttpGet]
+        public async Task<IActionResult> Login([FromBody] LoginDTO entity)
         {
-            var user = await _context.Users.FindAsync(id);
-            if (user == null)
+            try
             {
-                return NotFound();
+                string token = await _accountService.Login(entity);
+
+                // Implement Two factor authentication
+
+                return Ok(new { Token = token });
             }
-
-            _context.Users.Remove(user);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
-        }
-
-        private bool UserExists(int id)
-        {
-            return _context.Users.Any(e => e.Id == id);
+            catch (ArgumentNullException ex)
+            {
+                return BadRequest(new { Error = ex.Message });
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(new { Error = ex.Message });
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return Unauthorized(new { Error = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { Error = "An unexpected error occurred.", Details = ex.Message });
+            }
         }
     }
 }

@@ -9,6 +9,6 @@ namespace Personal.Dara.Hub.Server.Data.Interfaces
         Task Add(T entity);
         void Update(T entity);
         void Delete(T entity);
-        Task SaveAsync();
+        Task<bool> SaveAsync();
     }
 }

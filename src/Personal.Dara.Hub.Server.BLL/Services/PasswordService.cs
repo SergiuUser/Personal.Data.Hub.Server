@@ -16,5 +16,10 @@ namespace Personal.Dara.Hub.Server.BLL.Services
             return BCrypt.Net.BCrypt.Verify(password, hashedPassword);
         }
 
+        public bool VerifyIdenticalForConfirm(string password, string confirmPassword)
+        {
+            return password == confirmPassword;
+        }
+
     }
 }

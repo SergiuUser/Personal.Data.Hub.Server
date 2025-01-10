@@ -2,6 +2,6 @@
 {
     public interface IUserRepository
     {
-        // TODO: Add methods for user
+        public Task<bool> DoesEmailAndUsernameExists(string email, string username);
     }
 }
