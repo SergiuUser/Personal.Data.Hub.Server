@@ -6,6 +6,7 @@ namespace Personal.Dara.Hub.Server.BLL.Services
     {
         public Task<bool> SendEmailAsync(string email)
         {
+            // TODO: Send generic email
             throw new NotImplementedException();
         }
     }
