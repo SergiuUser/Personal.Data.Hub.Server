@@ -1,10 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using NuGet.Common;
+using Org.BouncyCastle.Tls;
 using Personal.Dara.Hub.Server.BLL.Services;
-using Personal.Dara.Hub.Server.Data.Context;
+using Personal.Dara.Hub.Server.BLL.Services.Interfaces;
 using Personal.Dara.Hub.Server.Models;
 using Personal.Dara.Hub.Server.Models.Data_transfer_object;
-using Personal.Dara.Hub.Server.Models.Models;
+using Personal.Dara.Hub.Server.Models.Models.Database;
 
 namespace Personal.Data.Hub.Srver.Api.Controllers
 {
@@ -12,18 +14,16 @@ namespace Personal.Data.Hub.Srver.Api.Controllers
     [ApiController]
     public class Account : ControllerBase
     {
-        private readonly AccountService _accountService;
-        private readonly EmailService _emailService;
+        private readonly IAccountService _accountService;
+        private readonly IEmailService _emailService;
 
-        public Account(AccountService accountService, EmailService emailService)
+        public Account(IAccountService accountService, IEmailService emailService)
         {
             _accountService = accountService;
             _emailService = emailService;
         }
 
-        // POST: api/Account
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
+        [HttpPost("/Register")]
         public async Task<ActionResult<User>> Register([FromBody] RegisterUserDTO entity)
         {
             try
@@ -48,9 +48,8 @@ namespace Personal.Data.Hub.Srver.Api.Controllers
             }
         }
 
-        // DELETE: api/Account/5
-        [HttpGet]
-        public async Task<IActionResult> Login([FromBody] LoginDTO entity)
+        [HttpPost("/Login")]
+        public async Task<ActionResult> Login([FromBody] LoginDTO entity)
         {
             try
             {
@@ -76,6 +75,14 @@ namespace Personal.Data.Hub.Srver.Api.Controllers
             {
                 return StatusCode(500, new { Error = "An unexpected error occurred.", Details = ex.Message });
             }
+        }
+
+        [HttpGet]
+        [Authorize]
+        public ActionResult Get()
+        {
+            string message = "hello";
+            return Ok(new { Token = message });
         }
     }
 }

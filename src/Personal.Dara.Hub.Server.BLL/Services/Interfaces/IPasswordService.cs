@@ -5,6 +5,6 @@
         public string HashPassword(string password);
 
         public bool VerifyPassword(string password, string hashedPassword);
-        public bool VerifyIdenticalForConfirm(string password, string confirmPassword)
+        public bool VerifyIdenticalForConfirm(string password, string confirmPassword);
     }
 }

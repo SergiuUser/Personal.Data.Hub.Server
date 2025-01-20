@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Personal.Dara.Hub.Server.Models.Models;
-using Personal.Dara.Hub.Server.Models.Models.Relationships;
+using Personal.Dara.Hub.Server.Models.Models.Database;
+using Personal.Dara.Hub.Server.Models.Models.Database.Relationships;
 
 namespace Personal.Dara.Hub.Server.Data.Context
 {

@@ -1,6 +1,6 @@
-﻿using Personal.Dara.Hub.Server.Models.Models.Relationships;
+﻿using Personal.Dara.Hub.Server.Models.Models.Database.Relationships;
 
-namespace Personal.Dara.Hub.Server.Models.Models
+namespace Personal.Dara.Hub.Server.Models.Models.Database
 {
     public class Workspace
     {

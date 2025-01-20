@@ -1,22 +1,26 @@
 ﻿using Personal.Dara.Hub.Server.BLL.Services.Interfaces;
-using Personal.Dara.Hub.Server.Data.Repositories;
+using Personal.Dara.Hub.Server.Data.Interfaces;
 using Personal.Dara.Hub.Server.Models;
 using Personal.Dara.Hub.Server.Models.Data_transfer_object;
-using Personal.Dara.Hub.Server.Models.Models;
+using Personal.Dara.Hub.Server.Models.Helpers;
+using Personal.Dara.Hub.Server.Models.Models.Database;
+using Personal.Dara.Hub.Server.Models.Models.Services;
 
 namespace Personal.Dara.Hub.Server.BLL.Services
 {
     public class AccountService : IAccountService
     {
-        private readonly UserRepository _userRepository;
-        private readonly PasswordService _passwordService;
+        private readonly IUserRepository _userRepository;
+        private readonly IPasswordService _passwordService;
+        private readonly ITokenService _tokenService;
 
         #region constructor
 
-        public AccountService(UserRepository userRepository, PasswordService passwordService)
+        public AccountService(IUserRepository userRepository, IPasswordService passwordService, ITokenService tokenService)
         {
             _userRepository = userRepository;
             _passwordService = passwordService;
+            _tokenService = tokenService;
         }
 
         #endregion
@@ -28,29 +32,25 @@ namespace Personal.Dara.Hub.Server.BLL.Services
 
             if (string.IsNullOrEmpty(entity.Username) && string.IsNullOrEmpty(entity.Email))
             {
-                throw new ArgumentNullException("Both Username or Email cannot be null or empty.");
+                throw new ArgumentNullException("Username or Email must be provided.");
             }
 
-            User? entityDB = null;
+            if (String.IsNullOrEmpty(entity.Password))
+            {
+                throw new InvalidOperationException("Password cannot be null");
+            }
 
             try
             {
-                if (!String.IsNullOrEmpty(entity.Username))
-                {
-                    entityDB = await _userRepository.GetByExpression(e => e.Username == entity.Username);
-                }
-                else if (!String.IsNullOrEmpty(entity.Email)) {
-                    entityDB = await _userRepository.GetByExpression(e => e.Email == entity.Email);
-                }
+
+                string? searchTerm = !string.IsNullOrEmpty(entity.Username) ? entity.Username : entity.Email;
+
+                var entityDB = await _userRepository.GetByExpression(e => e.Username == searchTerm || e.Email == searchTerm);
+
 
                 if (entityDB == null)
                 {
                     throw new InvalidOperationException("No user found with the provided Username or Email.");
-                }
-
-                if (String.IsNullOrEmpty(entity.Password))
-                {
-                    throw new InvalidOperationException("Password cannot be null");
                 }
 
                 if (!_passwordService.VerifyPassword(entity.Password, entityDB.Password))
@@ -58,8 +58,12 @@ namespace Personal.Dara.Hub.Server.BLL.Services
                     throw new UnauthorizedAccessException("Password isn't corrent");
                 }
 
-                // TODO: Token creation and return it
-                return string.Empty;
+                var userInfoForGeneratingToken = new UserInfoToGenerateJwtToken
+                {
+                    Email = entity.Email,
+                    Role = UserRoleHelper.Default,
+                };
+                return _tokenService.GenerateToken(userInfoForGeneratingToken);
 
             }
             catch

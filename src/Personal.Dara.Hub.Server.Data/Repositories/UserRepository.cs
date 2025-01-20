@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Personal.Dara.Hub.Server.Data.Context;
 using Personal.Dara.Hub.Server.Data.Interfaces;
-using Personal.Dara.Hub.Server.Models.Models;
+using Personal.Dara.Hub.Server.Models.Models.Database;
 
 namespace Personal.Dara.Hub.Server.Data.Repositories
 {
